@@ -34,11 +34,14 @@ export const useCartStore = create<CartState>((set) => ({
   },
   addItem: async (wixClient, productId, variantId, quantity) => {
     set((state) => ({ ...state, isLoading: true }));
+
+    const appId = "215238eb-22a5-4c36-9e7b-e7c08025e04e"; // Manually set appId
+
     const response = await wixClient.currentCart.addToCurrentCart({
       lineItems: [
         {
           catalogReference: {
-            appId: process.env.NEXT_PUBLIC_WIX_APP_ID!,
+            appId: appId,
             catalogItemId: productId,
             ...(variantId && { options: { variantId } }),
           },
