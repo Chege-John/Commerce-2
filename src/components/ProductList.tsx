@@ -34,7 +34,6 @@ const ProductList = async ({
         ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE)
         : 0
     );
-  // .find();
 
   if (searchParams?.sort) {
     const [sortType, sortBy] = searchParams.sort.split(" ");
@@ -62,7 +61,8 @@ const ProductList = async ({
               src={product.media?.mainMedia?.image?.url || "/product.png"}
               alt=""
               fill
-              sizes="25vw"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+              quality={80}
               className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500"
             />
             {product.media?.items && (
@@ -70,7 +70,8 @@ const ProductList = async ({
                 src={product.media?.items[1]?.image?.url || "/product.png"}
                 alt=""
                 fill
-                sizes="25vw"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                quality={80}
                 className="absolute object-cover rounded-md"
               />
             )}

@@ -24,7 +24,8 @@ const CategoryList = async () => {
                   src={item.media?.mainMedia?.image?.url || "cat.png"}
                   alt=""
                   fill
-                  sizes="20vw"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
+                  quality={80}
                   className="object-cover"
                 />
               </Suspense>

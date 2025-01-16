@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const SearchBar = () => {
-
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -12,14 +11,14 @@ const SearchBar = () => {
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
 
-    if(name){
-      router.push(`/list?name=${name}`)
+    if (name) {
+      router.push(`/list?name=${name}`);
     }
   };
 
   return (
     <form
-      className="flex items-center justify-between gap-4 bg-gray-100 p-2 rounded-md flex-1"
+      className="flex items-center justify-between gap-4 bg-gray-100 p-2 rounded-md w-full md:flex-1"
       onSubmit={handleSearch}
     >
       <input

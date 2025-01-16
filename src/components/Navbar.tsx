@@ -28,7 +28,7 @@ const Navbar = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className="flex-1 mx-4">
+        <div className="flex-1 mx-4 w-1/2">
           <SearchBar />
         </div>
 
