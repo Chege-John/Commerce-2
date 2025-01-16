@@ -1,11 +1,9 @@
+import { wixClientServer } from "@/lib/wixClientServer";
 import { products } from "@wix/stores";
 import Image from "next/image";
 import Link from "next/link";
 import DOMPurify from "isomorphic-dompurify";
 import Pagination from "./Pagination";
-import { Suspense } from "react";
-import Skeleton from "./Skeleton";
-import { wixClientServer } from "@/lib/wixClientServer";
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -20,26 +18,28 @@ const ProductList = async ({
 }) => {
   const wixClient = await wixClientServer();
 
+  // Ensure searchParams is defined and has necessary fields
+  const {
+    name = "",
+    type,
+    min = 0,
+    max = 999999,
+    sort,
+    page,
+  } = searchParams || {};
+
   const productQuery = wixClient.products
     .queryProducts()
-    .startsWith("name", searchParams?.name || "")
+    .startsWith("name", name)
     .eq("collectionIds", categoryId)
-    .hasSome(
-      "productType",
-      searchParams?.type ? [searchParams.type] : ["physical", "digital"]
-    )
-    .gt("priceData.price", searchParams?.min || 0)
-    .lt("priceData.price", searchParams?.max || 999999)
+    .hasSome("productType", type ? [type] : ["physical", "digital"])
+    .gt("priceData.price", min)
+    .lt("priceData.price", max)
     .limit(limit || PRODUCT_PER_PAGE)
-    .skip(
-      searchParams?.page
-        ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE)
-        : 0
-    );
+    .skip(page ? parseInt(page) * (limit || PRODUCT_PER_PAGE) : 0);
 
-  if (searchParams?.sort) {
-    const [sortType, sortBy] = searchParams.sort.split(" ");
-
+  if (sort) {
+    const [sortType, sortBy] = sort.split(" ");
     if (sortType === "asc") {
       productQuery.ascending(sortBy);
     }
@@ -59,29 +59,26 @@ const ProductList = async ({
           key={product._id}
         >
           <div className="relative w-full h-80">
-            {/* Suspense for the Image loading */}
-            <Suspense fallback={<Skeleton />}>
+            <Image
+              src={product.media?.mainMedia?.image?.url || "/product.png"}
+              alt=""
+              fill
+              sizes="25vw"
+              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500"
+            />
+            {product.media?.items && (
               <Image
-                src={product.media?.mainMedia?.image?.url || "/product.png"}
+                src={product.media?.items[1]?.image?.url || "/product.png"}
                 alt=""
                 fill
                 sizes="25vw"
-                className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500"
+                className="absolute object-cover rounded-md"
               />
-              {product.media?.items && (
-                <Image
-                  src={product.media?.items[1]?.image?.url || "/product.png"}
-                  alt=""
-                  fill
-                  sizes="25vw"
-                  className="absolute object-cover rounded-md"
-                />
-              )}
-            </Suspense>
+            )}
           </div>
           <div className="flex justify-between">
             <span className="font-medium">{product.name}</span>
-            <span className="font-semibold">Kes {product.price?.price}</span>
+            <span className="font-semibold">${product.price?.price}</span>
           </div>
           {product.additionalInfoSections && (
             <div
